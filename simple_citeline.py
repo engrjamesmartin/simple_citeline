@@ -45,6 +45,15 @@ class queryApi:
                     "trialstartdate", "trialstartdatefrom", "trialstartdateto", "protocolid", "source", "country",
                     "region", "trialMeshTerm", "trialTag", "moa", "drugName", "drugid", "trialPrimaryCompletionDate"]
 
+    def checkTerms(schema, search):
+        """Return True if passing all tests"""
+        if schema not in queryApi.avail_schema:
+            return False
+        for items in search:
+            if items not in queryApi.trial_search:
+                return False
+        return True
+
     def makeHeader(citeconn):
         headers = {
             'Accept': "application/json",
