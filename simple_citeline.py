@@ -12,6 +12,10 @@ class noSchemaFound(Error):
     """Raised when trying to find schema that does not exist"""
     pass
 
+class noSearchTermFound(Error):
+    """Raised when trying to find schema that does not exist"""
+    pass
+
 
 def citelineConnection(citeuser: object, citepass: object, citeauth: object) -> object:
 
@@ -48,10 +52,10 @@ class queryApi:
     def checkTerms(schema, search):
         """Return True if passing all tests"""
         if schema not in queryApi.avail_schema:
-            return False
+            raise noSchemaFound("type not found in schema list")
         for items in search:
             if items not in queryApi.trial_search:
-                return False
+                raise noSearchTermFound("search term not found in term list")
         return True
 
     def makeHeader(citeconn):
@@ -85,11 +89,7 @@ class queryApi:
             url = "https://api.pharmaintelligence.informa.com/v1/feed/" + str(s_type) + "/schema"
         else:
             url = has_page
-        headers = {
-            'Accept': "application/json",
-            'Authorization': "Bearer " + str(citeconn),
-            'Cache-Control': "no-cache"
-        }
+        headers = queryApi.makeHeader(citeconn)
 
         localResponse = json.loads(requests.request("GET", url, headers=headers).text)
         return localResponse
@@ -107,11 +107,9 @@ class queryApi:
             url = "https://api.pharmaintelligence.informa.com/v1/feed/" + str(s_type)
         else:
             url = has_page
-        headers = {
-            'Accept': "application/json",
-            'Authorization': "Bearer " + str(citeconn),
-            'Cache-Control': "no-cache"
-        }
+
+        headers = queryApi.makeHeader(citeconn)
+
         localResponse = json.loads(requests.request("GET", url, headers=headers).text)
         print(str(sys.getsizeof(str(localResponse))/1000/1000) + " MB")
         return localResponse
@@ -121,8 +119,9 @@ class queryApi:
     def citelineSearch(s_type, search_term, citeconn, has_page=0):
 
         print("Getting " + str(s_type) + ", this may take a while")
-        if s_type not in queryApi.avail_schema:
-            raise noSchemaFound("type not found in schema list")
+
+        queryApi.checkTerms(s_type, search_term)
+
         if has_page == 0:
             url = "https://api.pharmaintelligence.informa.com/v1/search/" + str(s_type)
         else:
@@ -132,11 +131,8 @@ class queryApi:
 
         payload = "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"\"\r\n\r\n\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--"
 
-        headers = {
-            'Accept': "application/json",
-            'Authorization': "Bearer " + str(citeconn),
-            'Cache-Control': "no-cache"
-        }
+        headers = queryApi.makeHeader(citeconn)
+
         localResponse = json.loads(requests.request("GET", url, data=payload, headers=headers, params=querystring).text)
         print(str(sys.getsizeof(str(localResponse))/1000/1000) + " MB")
         return localResponse

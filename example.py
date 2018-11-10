@@ -20,12 +20,17 @@ citeconn = sc.citelineConnection(citeuser,citepass,citeauth)
 #Example of a feed
 #response = sc.queryApi.citelineFeed("trial", citeconn)
 
+#Example of pagination
+response = sc.queryApi.citelineFeed("trial", citeconn)
+next_page = response['pagination']['nextPage']
+response = sc.queryApi.citelineFeed("trial", citeconn, has_page=next_page)
+
 #Example of a search
-search_term = {
-    "sponsorname":"Bayer",
-    "trialstartdatefrom": "2017-01-01"
-}
-response = sc.queryApi.citelineSearch("trial", search_term, citeconn)
+# search_term = {
+#     "sponsorname":"Bayer",
+#     "trialstartdatefrom": "2017-01-01"
+# }
+# response = sc.queryApi.citelineSearch("trial", search_term, citeconn)
 
 pp = pprint.PrettyPrinter(indent=0,depth=3)
 pp.pprint(response)
