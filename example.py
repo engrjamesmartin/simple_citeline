@@ -26,12 +26,14 @@ citeconn = sc.citelineConnection(citeuser,citepass,citeauth)
 # response = sc.queryApi.citelineFeed("trial", citeconn, has_page=next_page)
 #
 # Example of a search
-# search_term = {
-#     "protocolid": "CTR20150050"
-# }
-# response = sc.queryApi.citelineSearch("trial", search_term, citeconn)
+search_term = {
+    "sponsorname": "novartis",
+    "trialstartdatefrom": "2018-01-01"
 
-response = sc.queryApi.citelineList("trial",'sponsorName',citeconn)
+}
+response = sc.queryApi.citelineSearch("trial", search_term, citeconn)
+
+# response = sc.queryApi.citelineList("trial",'sponsorName',citeconn)
 
 pp = pprint.PrettyPrinter(indent=0)
 pp.pprint(response)

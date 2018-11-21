@@ -45,17 +45,42 @@ def citelineConnection(citeuser: object, citepass: object, citeauth: object) -> 
 class queryApi:
 
     avail_schema = ["drug", "trial", "investigator", "organization", "drugevent", "drugcatalyst"]
-    trial_search = ["id", "diseasehierachy", "phase", "status", "sponsorname", "sponsorid", "sponsortype",
+    trial_search = ["id", "diseasehierachy", "phase", "status", "sponsorname", "sponsortype",
                     "trialstartdate", "trialstartdatefrom", "trialstartdateto", "protocolid", "source", "country",
                     "region", "trialMeshTerm", "trialTag", "moa", "drugName", "drugid", "trialPrimaryCompletionDate"]
+    drug_search = ["id", "indicationgroup", "drugname", "globalstatus", "companyname", "ispharmaprojectsdrug",
+                   "drugMeshTerm", "moa", "targetname", "origin", "entrezgeneid"]
+    investigator_search = ["id", "trialstartdate", "country", "specialty", "sponsors", "diseasetier",
+                           "name", "diseaseHierarchy", "state", "city"]
+    organization_search = ["id", "organizationtype", "country", "name", "diseaseHierarchy",  "lasttrialstartdate",
+                           "state", "city"]
+    drugevent_search = ["id", "drugname", "companyname", "indicationgroup", "eventDate", "meshterm", "eventType", "companyType"]
+    drugcatalyst_search = ["id", "drugname", "companyname", "indicationgroup", "catalystStatus", "catalystImpact",
+                    "dateCatalystOccurred", "dateCatlystRemoved", "meshterm", "catalystType", "companyType"]
 
     def checkTerms(schema, search):
         """Return True if passing all tests"""
         if schema not in queryApi.avail_schema:
-            raise noSchemaFound("type not found in schema list")
+            raise noSchemaFound(" type not found in schema list")
         for items in search:
-            if items not in queryApi.trial_search:
-                raise noSearchTermFound("search term not found in term list")
+            if schema == 'drug':
+                if items not in queryApi.drug_search:
+                    raise noSearchTermFound(" search term " + items + " not found in term list")
+            if schema == 'trial':
+                if items not in queryApi.trial_search:
+                    raise noSearchTermFound(" search term " + items + " not found in term list")
+            if schema == 'investigator':
+                if items not in queryApi.investigator_search:
+                    raise noSearchTermFound(" search term " + items + " not found in term list")
+            if schema == 'organization':
+                if items not in queryApi.organization_search:
+                    raise noSearchTermFound(" search term " + items + " not found in term list")
+            if schema == 'drugevent':
+                if items not in queryApi.drugevent_search:
+                    raise noSearchTermFound(" search term " + items + " not found in term list")
+            if schema == 'drugcatalyst':
+                if items not in queryApi.drugcatalyst_search:
+                    raise noSearchTermFound("search term not found in term list")
         return True
 
     def makeHeader(citeconn):
