@@ -45,7 +45,7 @@ def citelineConnection(citeuser: object, citepass: object, citeauth: object) -> 
 class queryApi:
 
     avail_schema = ["drug", "trial", "investigator", "organization", "drugevent", "drugcatalyst"]
-    trial_search = ["id", "diseasehierachy", "phase", "status", "sponsorname", "sponsortype",
+    trial_search = ["id", "diseasehierarchy", "phase", "status", "sponsorname", "sponsortype",
                     "trialstartdate", "trialstartdatefrom", "trialstartdateto", "protocolid", "source", "country",
                     "region", "trialMeshTerm", "trialTag", "moa", "drugName", "drugid", "trialPrimaryCompletionDate"]
     drug_search = ["id", "indicationgroup", "drugname", "globalstatus", "companyname", "ispharmaprojectsdrug",
@@ -145,20 +145,27 @@ class queryApi:
 
         print("Getting " + str(s_type) + ", this may take a while")
 
-        queryApi.checkTerms(s_type, search_term)
+        # queryApi.checkTerms(s_type, search_term)
 
         if has_page == 0:
             url = "https://api.pharmaintelligence.informa.com/v1/search/" + str(s_type)
+            querystring = search_term
+
+            payload = "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"\"\r\n\r\n\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--"
+
+            headers = queryApi.makeHeader(citeconn)
+            localResponse = json.loads(
+                requests.request("GET", url, data=payload, headers=headers, params=querystring).text)
         else:
             url = has_page
 
-        querystring = search_term
+            payload = "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"\"\r\n\r\n\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--"
 
-        payload = "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"\"\r\n\r\n\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--"
+            headers = queryApi.makeHeader(citeconn)
+            localResponse = json.loads(
+            requests.request("GET", url, data=payload, headers=headers).text)
 
-        headers = queryApi.makeHeader(citeconn)
 
-        localResponse = json.loads(requests.request("GET", url, data=payload, headers=headers, params=querystring).text)
         print(str(sys.getsizeof(str(localResponse))/1000/1000) + " MB")
         return localResponse
 
